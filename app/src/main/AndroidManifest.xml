@@ -17,6 +17,13 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Lilly">
+        </activity>
+
+        <activity
+            android:name="com.example.featherlyspy.lilly.LillyActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Lilly">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
