@@ -20,6 +20,11 @@ import android.util.Base64
 import android.util.Log
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import io.radev.lilly.ChatCompletionRequest
+import io.radev.lilly.Content
+import io.radev.lilly.ImageAnalyzeRequest
+import io.radev.lilly.ImageUrl
+import io.radev.lilly.Message
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -36,58 +41,80 @@ class UploadViewModel : ViewModel() {
 
     val storage by lazy { Firebase.storage }
 
-
-    fun analyzeImageWithGPT(context: Context, imageUri: Uri) {
+    //todo https://platform.openai.com/docs/guides/vision/vision
+    fun analyzeImageWithGPT(imageUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val base64Image = encodeImageToBase64(context, imageUri)
+//                val base64Image = encodeImageToBase64(context, imageUri)
 
-                val inputStream = context.contentResolver.openInputStream(imageUri)
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                inputStream?.close()
-                val resizedBitmap =
-                    resizeAndCompressBitmap(bitmap, 512, 512, 75) // Exam
+//                val inputStream = context.contentResolver.openInputStream(imageUri)
+//                val bitmap = BitmapFactory.decodeStream(inputStream)
+//                inputStream?.close()
+//                val resizedBitmap =
+//                    resizeAndCompressBitmap(bitmap, 512, 512, 75) // Exam
 
-                if (resizedBitmap != null) {
-                    // Create the request to send to GPT-4 Vision
-                    val analyzeRequest = AnalyzeImageRequest(
-                        model = "gpt-4o",
-                        messages = listOf(
-                            AnalyzeImageRequest.Message(
-                                role = "user",
-                                content = "Please analyze the following content: $resizedBitmap"
-                            ),
-                            AnalyzeImageRequest.Message(role = "user", content = base64Image)
-                        )
+//                if (resizedBitmap != null) {
+                // Create the request to send to GPT-4 Vision
+                val analyzeRequest = AnalyzeImageRequest(
+                    model = "gpt-4o",
+                    messages = listOf(
+                        AnalyzeImageRequest.Message(
+                            role = "user",
+                            content = "Please name this tarot card: $imageUrl"
+                        ),
+//                            AnalyzeImageRequest.Message(role = "user", content = base64Image)
                     )
+                )
 
-                    val service = OpenAIClient.getClient().create(OpenAIService::class.java)
-                    val response = service.analyzeImage(analyzeRequest)
+//                val service = OpenAIClient.getClient().create(OpenAIService::class.java)
+//                val response = service.analyzeImage(analyzeRequest)
+                val request = ChatCompletionRequest(
+                    model = "gpt-4o-mini",
+                    messages = listOf(
+                        Message(
+                            role = "user",
+                            content = listOf(
+                                Content(type = "text", text = "What tarot cards are in the image?"),
+                                Content(
+                                    type = "image_url",
+                                    imageUrl = ImageUrl(
+                                        url = imageUrl
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    maxTokens = 300
+                )
 
-                    when (response) {
-                        is NetworkResponse.Success -> {
-                            // Handle successful analysis result
-                            _uploadState.value = UploadState.Success
-                        }
+                val response = service.analyzeImage(request)
+//                val response = service.analyzeImage(ImageAnalyzeRequest(imageUrl))
 
-                        is NetworkResponse.ServerError -> {
-                            _uploadState.value =
-                                UploadState.Error("Server error: ${response.body?.error}")
-                        }
-
-                        is NetworkResponse.NetworkError -> {
-                            _uploadState.value =
-                                UploadState.Error("Network error: ${response.error.message}")
-                        }
-
-                        is NetworkResponse.UnknownError -> {
-                            _uploadState.value =
-                                UploadState.Error("Unknown error: ${response.error?.message}")
-                        }
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        // Handle successful analysis result
+                        Log.d("gpt upload", response.body.toString())
+                        _uploadState.value = UploadState.Success
                     }
-                } else {
-                    _uploadState.value = UploadState.Error("Failed to encode image.")
+
+                    is NetworkResponse.ServerError -> {
+                        _uploadState.value =
+                            UploadState.Error("Server error: ${response.body?.error}")
+                    }
+
+                    is NetworkResponse.NetworkError -> {
+                        _uploadState.value =
+                            UploadState.Error("Network error: ${response.error.message}")
+                    }
+
+                    is NetworkResponse.UnknownError -> {
+                        _uploadState.value =
+                            UploadState.Error("Unknown error: ${response.error?.message}")
+                    }
                 }
+//            } else {
+//            _uploadState.value = UploadState.Error("Failed to encode image.")
+//        }
             } catch (e: Exception) {
                 _uploadState.value = UploadState.Error("Error during image analysis: ${e.message}")
             }
@@ -155,7 +182,8 @@ class UploadViewModel : ViewModel() {
             .addOnSuccessListener {
                 imagesRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     Log.d("upload result", downloadUri.toString())
-                    _uploadState.value = UploadState.Success
+//                    _uploadState.value = UploadState.Success
+                    analyzeImageWithGPT(downloadUri.toString())
                 }
             }
             .addOnFailureListener {
