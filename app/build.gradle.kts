@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -26,15 +28,19 @@ android {
     }
 
     buildTypes {
+        val openAiKey: String =
+            gradleLocalProperties(rootDir, providers).getProperty("OPEN_AI_KEY") ?: ""
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "OPEN_AI_KEY", openAiKey)
         }
         debug {
-
+            buildConfigField("String", "OPEN_AI_KEY", openAiKey)
         }
     }
     compileOptions {
@@ -46,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -53,6 +60,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += setOf("META-INF/LICENSE.md", "META-INF/LICENSE-notice.md")
         }
     }
 }

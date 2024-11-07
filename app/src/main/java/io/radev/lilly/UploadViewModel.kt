@@ -1,4 +1,4 @@
-package com.example.featherlyspy.lilly
+package io.radev.lilly
 
 import android.content.Context
 import android.net.Uri
@@ -18,26 +18,29 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import com.example.featherlyspy.lilly.AnalyzeImageRequest
+import com.example.featherlyspy.lilly.OpenAIService
+import com.example.featherlyspy.lilly.UploadResponse
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import io.radev.lilly.ChatCompletionRequest
-import io.radev.lilly.Content
-import io.radev.lilly.ImageAnalyzeRequest
-import io.radev.lilly.ImageUrl
-import io.radev.lilly.Message
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.UUID
+import javax.inject.Inject
 
-class UploadViewModel : ViewModel() {
+@HiltViewModel
+class UploadViewModel @Inject constructor(
+    private val openAIService: OpenAIService
+) : ViewModel() {
 
     private val _uploadState = MutableStateFlow<UploadState>(UploadState.Idle)
     val uploadState: StateFlow<UploadState> get() = _uploadState
 
-    val service by lazy {
-        OpenAIClient.getClient().create(OpenAIService::class.java)
-    }
+//    val service by lazy {
+//        OpenAIClient.getClient().create(OpenAIService::class.java)
+//    }
 
     val storage by lazy { Firebase.storage }
 
@@ -87,7 +90,7 @@ class UploadViewModel : ViewModel() {
                     maxTokens = 300
                 )
 
-                val response = service.analyzeImage(request)
+                val response = openAIService.analyzeImage(request)
 //                val response = service.analyzeImage(ImageAnalyzeRequest(imageUrl))
 
                 when (response) {
@@ -140,7 +143,7 @@ class UploadViewModel : ViewModel() {
                     ) // or other valid purposes
 
 
-                    val response = service.uploadFile(body, purpose)
+                    val response = openAIService.uploadFile(body, purpose)
 
                     when (response) {
                         is NetworkResponse.Success -> {
@@ -210,7 +213,7 @@ class UploadViewModel : ViewModel() {
             ),
 //            image = fileId // Assuming you can use the uploaded file ID directly
         )
-        val analyzeResponse = service.analyzeImage(analyzeRequest)
+        val analyzeResponse = openAIService.analyzeImage(analyzeRequest)
 
         when (analyzeResponse) {
             is NetworkResponse.Success -> {
