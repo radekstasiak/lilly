@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.hilt.gradle.plugin)
+    alias(libs.plugins.google.play.services)
 }
 
 android {
@@ -73,6 +74,11 @@ dependencies {
     //JSON
     implementation(libs.moshi)
     ksp(libs.moshi.codegen)
+
+
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
 
     // https://github.com/michaelbull/kotlin-result
     // another useful library, which helps to represent success/error results

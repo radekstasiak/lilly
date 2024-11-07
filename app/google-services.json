@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "927307257819",
+    "project_id": "lilly-app-ba36c",
+    "storage_bucket": "lilly-app-ba36c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927307257819:android:7f572834e3e9f25dc8f9fe",
+        "android_client_info": {
+          "package_name": "io.radev.lilly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdQTKrAgtTehX-tsKZcu8SqAOVYLjjdk0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
