@@ -17,9 +17,13 @@ import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.UUID
 
 class UploadViewModel : ViewModel() {
 
@@ -29,6 +33,9 @@ class UploadViewModel : ViewModel() {
     val service by lazy {
         OpenAIClient.getClient().create(OpenAIService::class.java)
     }
+
+    val storage by lazy { Firebase.storage }
+
 
     fun analyzeImageWithGPT(context: Context, imageUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -136,6 +143,25 @@ class UploadViewModel : ViewModel() {
                 _uploadState.value = UploadState.Error("Failed to upload image: ${e.message}")
             }
         }
+    }
+
+    fun uploadPhotoToFirebase(
+        uri: Uri
+    ) {
+        val storageRef = storage.reference
+        val imagesRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
+
+        imagesRef.putFile(uri)
+            .addOnSuccessListener {
+                imagesRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    Log.d("upload result", downloadUri.toString())
+                    _uploadState.value = UploadState.Success
+                }
+            }
+            .addOnFailureListener {
+                Log.d("upload result", it.toString())
+                _uploadState.value = UploadState.Error(it.toString())
+            }
     }
 
     suspend fun analyzImage(uploadResponse: UploadResponse) {

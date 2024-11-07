@@ -62,7 +62,10 @@ fun UploadImageScreen(viewModel: UploadViewModel = viewModel(), imageUri: Uri?) 
             onClick = {
                 imageUri?.let {
                     showLoading = true
-                    viewModel.analyzeImageWithGPT(context, it)
+//                    viewModel.analyzeImageWithGPT(context, it)
+                    viewModel.uploadPhotoToFirebase(
+                        uri = it
+                    )
                 }
             },
             enabled = imageUri != null

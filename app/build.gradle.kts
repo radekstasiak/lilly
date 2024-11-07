@@ -79,6 +79,7 @@ dependencies {
     //firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.appcheck.debug)
 
     // https://github.com/michaelbull/kotlin-result
     // another useful library, which helps to represent success/error results
