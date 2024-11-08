@@ -11,12 +11,13 @@ import androidx.core.content.FileProvider
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import dagger.hilt.android.AndroidEntryPoint
 import io.radev.lilly.ui.theme.LillyTheme
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+@AndroidEntryPoint
 class LillyActivity : ComponentActivity() {
 
     private val imageUri: Uri by lazy {
