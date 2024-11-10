@@ -1,4 +1,4 @@
-package com.example.featherlyspy.lilly
+package io.radev.lilly
 
 import android.net.Uri
 import android.os.Bundle
@@ -8,11 +8,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.core.content.FileProvider
+import com.example.featherlyspy.lilly.CameraLaunchScreen
+import com.example.featherlyspy.lilly.PermissionCheckScreen
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import io.radev.lilly.ui.theme.LillyTheme
+import io.radev.lilly.ui.upload.UploadImageScreen
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

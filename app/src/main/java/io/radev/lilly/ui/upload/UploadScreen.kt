@@ -1,4 +1,4 @@
-package com.example.featherlyspy.lilly
+package io.radev.lilly.ui.upload
 
 import android.net.Uri
 import android.provider.MediaStore
@@ -15,8 +15,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.radev.lilly.UploadState
-import io.radev.lilly.UploadViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -64,18 +62,27 @@ fun UploadImageScreen(viewModel: UploadViewModel = viewModel(), imageUri: Uri?) 
             onClick = {
                 imageUri?.let {
                     showLoading = true
-//                    viewModel.analyzeImageWithGPT(context, it)
-                    viewModel.uploadPhotoToFirebase(
-                        uri = it
-                    )
+                    viewModel.uploadPhotoToFirebase(it)
                 }
             },
             enabled = imageUri != null
         ) {
-            Text(text = "Upload Image")
+            Text(text = "Analyze via firebase")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                imageUri?.let {
+                    showLoading = true
+                    viewModel.analyzeImageBase64WithGPT(it)
+                }
+            },
+            enabled = imageUri != null
+        ) {
+            Text(text = "Upload Image to GPT directly")
+        }
 
         if (showLoading) {
             CircularProgressIndicator()

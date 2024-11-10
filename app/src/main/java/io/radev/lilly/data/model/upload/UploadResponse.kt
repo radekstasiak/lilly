@@ -1,4 +1,4 @@
-package com.example.featherlyspy.lilly
+package io.radev.lilly.data.model.upload
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

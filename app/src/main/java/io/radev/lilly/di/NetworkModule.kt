@@ -1,6 +1,6 @@
 package io.radev.lilly.di
 
-import com.example.featherlyspy.lilly.OpenAIService
+import io.radev.lilly.network.OpenAIService
 import com.haroldadmin.cnradapter.NetworkResponseAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Module

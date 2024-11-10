@@ -1,4 +1,4 @@
-package io.radev.lilly
+package io.radev.lilly.data.model.chatcompletion
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
